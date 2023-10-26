@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Roku Remote Controller</title>
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                height: 100vh;
+                background-color: #f4f4f4;
+            }
+
+            .remote {
+                display: grid;
+                grid-template-areas:
+                    "home home home . . info info info"
+                    "back back . . . . volume-up volume-up"
+                    ". . up up . . volume-down volume-down"
+                    "left left select select right right . ."
+                    ". . down down . . . .";
+                gap: 20px;
+                background-color: #333;
+                padding: 20px;
+                border-radius: 10px;
+            }
+
+            button {
+                padding: 15px;
+                border: none;
+                border-radius: 5px;
+                cursor: pointer;
+                font-size: 20px;
+                background-color: #555;
+                color: #fff;
+                transition: background-color 0.3s;
+            }
+
+            button:hover {
+                background-color: #777;
+            }
+
+            .home {
+                grid-area: home;
+            }
+
+            .up {
+                grid-area: up;
+            }
+
+            .left {
+                grid-area: left;
+            }
+
+            .select {
+                grid-area: select;
+            }
+
+            .right {
+                grid-area: right;
+            }
+
+            .down {
+                grid-area: down;
+            }
+
+            .back {
+                grid-area: back;
+            }
+
+            .info {
+                grid-area: info;
+            }
+
+            .volume-up {
+                grid-area: volume-up;
+            }
+
+            .volume-down {
+                grid-area: volume-down;
+            }
+        </style>
+    </head>
+
+    <body>
+        <div class="remote">
+            <button data-action="Home" class="home">&#8962;</button>
+            <button data-action="Up" class="up">&#9650;</button>
+            <button data-action="Left" class="left">&#9664;</button>
+            <button data-action="Select" class="select">&#x03BF;</button>
+            <button data-action="Right" class="right">&#9654;</button>
+            <button data-action="Down" class="down">&#9660;</button>
+            <button data-action="Back" class="back">&#8617;</button>
+            <button data-action="Info" class="info">*</button>
+            <button data-action="VolumeUp" class="volume-up">+</button>
+            <button data-action="VolumeDown" class="volume-down">-</button>
+        </div>
+        <script>
+            const baseURL = "http://Roku.IP:8060/keypress/";
+
+            document.addEventListener("DOMContentLoaded", function () {
+                const buttons = document.querySelectorAll(".remote button");
+
+                buttons.forEach((button) => {
+                    const action = button.getAttribute("data-action");
+                    const url = baseURL + action;
+                    button.setAttribute("data-url", url);
+
+                    button.addEventListener("click", function () {
+                        fetch(url, { method: "POST" });
+                    });
+                });
+
+                const keyMappings = {
+                    Enter: "Select",
+                    "=": "volume-up",
+                    "+": "volume-up",
+                    "-": "volume-down",
+                    Escape: "Home",
+                    h: "Home",
+                    8: "Info",
+                    "*": "Info",
+                    Backspace: "Back",
+                    ArrowUp: "Up",
+                    ArrowDown: "Down",
+                    ArrowLeft: "Left",
+                    ArrowRight: "Right",
+                };
+
+                document.addEventListener("keydown", function (event) {
+                    const action = keyMappings[event.key];
+                    if (action) {
+                        const button = document.querySelector(
+                            `.${action.toLowerCase()}`,
+                        );
+                        button.click();
+                    }
+                });
+            });
+        </script>
+    </body>
+</html>
